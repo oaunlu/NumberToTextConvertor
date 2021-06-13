@@ -16,7 +16,7 @@ int quick_pow10(int);
 template <class T>
 string convert_to_text(T, int, int, bool);
 
-int main()
+int main()	//driver code
 {
 	double input;
 	
@@ -68,7 +68,7 @@ int main()
 	return 0;
 }
 
-template <class T>
+template <class T>	//template function for text conversion
 string convert_to_text(T input, int number, int basamaksayisi, bool isUpperBasamak) {
 	switch (basamaksayisi)
 	{
