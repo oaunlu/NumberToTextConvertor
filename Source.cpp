@@ -18,11 +18,15 @@ string convert_to_text(T, int, int, bool);
 
 int main()	//driver code
 {
+
+	cout << "Sayi-Yazi Cevirme aracina hosgeldiniz!!\n";
+	cout << "Su anda sistemimiz 100 trilyona kadar olan sayilari cevirebilmektedir.\n";
+	cout << "			Yazar: Orkun Alp Unlu		Versiyon:1.0\n\n";
+
     while(true) //superloop
     {
     	double input;
     	
-    	cout << "Su anda sistemimiz 100 trilyona kadar olan sayilari cevirebilmektedir.\n\n";
     	cout << "Lutfen ondalikli bir sayi giriniz\n";
     	cin >> input;
     
@@ -70,7 +74,7 @@ int main()	//driver code
     	
     	string exitInput;
     	
-    	cout << "Devam etmek istiyor musunuz?\n";
+    	cout << "Devam etmek istiyor musunuz?\n evet/hayir\n";
     	cin >> exitInput;
     	
     	if(exitInput=="hayir")
