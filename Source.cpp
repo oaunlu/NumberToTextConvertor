@@ -18,55 +18,69 @@ string convert_to_text(T, int, int, bool);
 
 int main()	//driver code
 {
-	double input;
-	
-	cout << "Lutfen ondalikli bir sayi giriniz\n";
-	cin >> input;
-
-	//stringstream ss;
-
-	//ss << fixed << setprecision(numeric_limits<float>::max()) << input;
-
-	//ss << input;
-	//string strinpt = ss.str();
-
-	string strinpt = to_string(input);
-
-	string str1 = strinpt.substr(0, strinpt.find("."));
-	string str2 = strinpt.substr(strinpt.find(".")+1);
-	
-	//cout << str1 << endl << str2 << endl;
-
-	long long input1 = stoll(str1);
-	int input2 = stoi(str2);
-
-	string output = "";
-
-	vector <int> intArr1 = integerToArray<long long>(input1);
-	vector <int> intArr2 = integerToArray<int>(input2);
-
-	int n1 = intArr1.size();
-
-	for (unsigned i = 0; i < intArr1.size(); i++)
-	{
-		output += convert_to_text<long long>(input1, intArr1[i], n1, false);
-		n1--;
-	}
-
-	output += "virgul";
-
-	int n2 = intArr2.size();
-
-	for (unsigned i = 0; i < intArr2.size(); i++)
-	{
-		output += convert_to_text<int>(input2, intArr2[i], n2, false);
-		n2--;
-	}
-
-	cout << output << endl;
-	
+    while(true) //superloop
+    {
+    	double input;
+    	
+    	cout << "Su anda sistemimiz 100 trilyona kadar olan sayilari cevirebilmektedir.\n\n";
+    	cout << "Lutfen ondalikli bir sayi giriniz\n";
+    	cin >> input;
+    
+    	//stringstream ss;
+    
+    	//ss << fixed << setprecision(numeric_limits<float>::max()) << input;
+    
+    	//ss << input;
+    	//string strinpt = ss.str();
+    
+    	string strinpt = to_string(input);
+    
+    	string str1 = strinpt.substr(0, strinpt.find("."));
+    	string str2 = strinpt.substr(strinpt.find(".")+1);
+    	
+    	//cout << str1 << endl << str2 << endl;
+    
+    	long long input1 = stoll(str1);
+    	int input2 = stoi(str2);
+    
+    	string output = "";
+    
+    	vector <int> intArr1 = integerToArray<long long>(input1);
+    	vector <int> intArr2 = integerToArray<int>(input2);
+    
+    	int n1 = intArr1.size();
+    
+    	for (unsigned i = 0; i < intArr1.size(); i++)
+    	{
+    		output += convert_to_text<long long>(input1, intArr1[i], n1, false);
+    		n1--;
+    	}
+    
+    	output += "virgul";
+    
+    	int n2 = intArr2.size();
+    
+    	for (unsigned i = 0; i < intArr2.size(); i++)
+    	{
+    		output += convert_to_text<int>(input2, intArr2[i], n2, false);
+    		n2--;
+    	}
+    
+    	cout << output << endl;
+    	
+    	string exitInput;
+    	
+    	cout << "Devam etmek istiyor musunuz?\n";
+    	cin >> exitInput;
+    	
+    	if(exitInput=="hayir")
+    	    break;
+    	else
+    	    continue;
+    }
 	return 0;
 }
+
 
 template <class T>	//template function for text conversion
 string convert_to_text(T input, int number, int basamaksayisi, bool isUpperBasamak) {
