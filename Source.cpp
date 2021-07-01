@@ -2,9 +2,10 @@
 #include <vector>
 #include <string>
 #include <utility>
-//#include <sstream>
-//#include <iomanip>
+#include <sstream>
+#include <iomanip>
 //#include <limits>
+//#define STRING(num) #num		// string conversion with macro expression
 
 using namespace std;
 
@@ -17,30 +18,35 @@ int quick_pow10(int);
 template <class T>
 pair<string, bool> convert_to_text(T, int, int, bool);
 
-int main()	//driver code
+template <class T>
+pair<string, bool> onlar(T, int, bool);
+template <class T>
+pair<string, bool> yuzler(T, int, bool);
+
+int main()	// driver code
 {
 
 	cout << "Sayi-Yazi Cevirme aracina hosgeldiniz!!\n"
 		    "Su anda sistemimiz 999 trilyona kadar olan sayilari cevirebilmektedir.\n"
+			"Noktadan sonraki hassasiyet yuksek sayilarda bozuldugu icin 2 olarak sinirlandirilmistir.\n"
 			"Yazim bicimi: [Tamsayi]'.'[Ondalik] araya virgul koymayiniz :)\n"
-			"Ornek: 123456.123456 -> yuzyirmiucbindortyuzellialtinoktayuzyirmiucbindortyuzellialti\n"
-		    "			Yazar: Orkun Alp Unlu		Versiyon:1.2\n\n";
+			"Ornek: 123456.12 -> yuzyirmiucbindortyuzellialtinoktaoniki\n"
+		    "			Yazar: Orkun Alp Unlu		Versiyon:1.3\n\n";
 
-	while (true) //superloop
+	while (true) // superloop
 	{
-		double input;
+		long double input;
 
 		cout << "Lutfen ondalikli bir sayi giriniz\n";
 		cin >> input;
 
-		//stringstream ss;
+		stringstream ss;
+		ss << fixed << setprecision(/*numeric_limits<float>::max()*/2) << input; // string conversion with stringsream
+		string strinpt = ss.str();
 
-		//ss << fixed << setprecision(numeric_limits<float>::max()) << input;
+		//string strinpt = to_string(input); // string conversion with std::to_string() function
 
-		//ss << input;
-		//string strinpt = ss.str();
-
-		string strinpt = to_string(input);
+		//string strinpt(STRING(input));	// string conversion with macro expression
 
 		string str1 = strinpt.substr(0, strinpt.find("."));
 		string str2 = strinpt.substr(strinpt.find(".") + 1);
@@ -48,14 +54,14 @@ int main()	//driver code
 		//cout << str1 << endl << str2 << endl;
 
 		long long input1 = stoll(str1);
-		int input2 = stoi(str2);
+		long input2 = stol(str2);
 
 		string output = "";
 
 		vector <int> intArr1 = integerToArray<long long>(input1);
-		vector <int> intArr2 = integerToArray<int>(input2);
+		vector <int> intArr2 = integerToArray<long>(input2);
 
-		int n1 = intArr1.size();
+		long n1 = intArr1.size();
 		bool isUpperBasamak = false;
 		for (unsigned i = 0; i < intArr1.size(); i++)
 		{
@@ -69,11 +75,11 @@ int main()	//driver code
 		{
 			output += "nokta";
 
-			int n2 = intArr2.size();
+			long n2 = intArr2.size();
 			bool isUpperBasamak = false;
 			for (unsigned i = 0; i < intArr2.size(); i++)
 			{
-				pair<string, bool> returnVals = convert_to_text<int>(input2, intArr2[i], n2, isUpperBasamak);
+				pair<string, bool> returnVals = convert_to_text<long>(input2, intArr2[i], n2, isUpperBasamak);
 				output += returnVals.first;
 				isUpperBasamak = returnVals.second;
 				n2--;
@@ -94,258 +100,189 @@ int main()	//driver code
 	return 0;
 }
 
-
 template <class T>	//template function for text conversion
 pair<string, bool> convert_to_text(T input, int number, int basamaksayisi, bool isUpperBasamak) {
-	switch (basamaksayisi)
+	pair<string, bool> returnVals;
+	string output = "";
+	int basamak = basamaksayisi % 3;
+
+	if (basamaksayisi > 3)
 	{
-	case 1:
-		switch (number)
+		switch (basamak)
 		{
 		case 0:
-			return make_pair("", false);
+		{
+			returnVals = yuzler(input, number, isUpperBasamak);
+			return returnVals;
+		}
 		case 1:
-			return make_pair("bir", false);
-		case 2:
-			return make_pair("iki", false);
-		case 3:
-			return make_pair("uc", false);
-		case 4:
-			return make_pair("dort", false);
-		case 5:
-			return make_pair("bes", false);
-		case 6:
-			return make_pair("alti", false);
-		case 7:
-			return make_pair("yedi", false);
-		case 8:
-			return make_pair("sekiz", false);
-		case 9:
-			return make_pair("dokuz", false);
-		}
-	case 2:
-		switch (number)
 		{
-		case 0:
-			return make_pair("", false);
+			if (basamaksayisi != 4)
+			{
+				if (number != 0)
+				{
+					returnVals = convert_to_text(input, number, 1, false);
+					output = returnVals.first;
+					switch (basamaksayisi)
+					{
+					case 7:
+						output += "milyon";
+						break;
+					case 10:
+						output += "milyar";
+						break;
+					case 13:
+						output += "trilyon";
+						break;
+					}
+				}
+				else if (number == 0 && isUpperBasamak)
+				{
+					switch (basamaksayisi)
+					{
+					case 7:
+						output += "milyon";
+						break;
+					case 10:
+						output += "milyar";
+						break;
+					case 13:
+						output += "trilyon";
+						break;
+					}
+					isUpperBasamak = false;
+				}
+
+				return make_pair(output, false);
+			}
+			else
+			{
+				if (number != 0)
+				{
+					if (number != 1)
+					{
+						returnVals = convert_to_text(input, number, 1, false);
+						output = returnVals.first;
+					}
+
+					output += "bin";
+				}
+				else if (number == 0 && isUpperBasamak)
+				{
+					output += "bin";
+					isUpperBasamak = false;
+				}
+
+				return make_pair(output, false);
+			}
+		}
+		case 2:
+		{
+			returnVals = onlar(input, number, isUpperBasamak);
+			return returnVals;
+		}
+		}
+	}
+	else
+	{
+		switch (basamaksayisi)
+		{
 		case 1:
-			return make_pair("on", false);
+			switch (number)
+			{
+			case 0:
+				return make_pair("", false);
+			case 1:
+				return make_pair("bir", false);
+			case 2:
+				return make_pair("iki", false);
+			case 3:
+				return make_pair("uc", false);
+			case 4:
+				return make_pair("dort", false);
+			case 5:
+				return make_pair("bes", false);
+			case 6:
+				return make_pair("alti", false);
+			case 7:
+				return make_pair("yedi", false);
+			case 8:
+				return make_pair("sekiz", false);
+			case 9:
+				return make_pair("dokuz", false);
+			}
 		case 2:
-			return make_pair("yirmi", false);
+			switch (number)
+			{
+			case 0:
+				return make_pair("", false);
+			case 1:
+				return make_pair("on", false);
+			case 2:
+				return make_pair("yirmi", false);
+			case 3:
+				return make_pair("otuz", false);
+			case 4:
+				return make_pair("kirk", false);
+			case 5:
+				return make_pair("elli", false);
+			case 6:
+				return make_pair("altmis", false);
+			case 7:
+				return make_pair("yetmis", false);
+			case 8:
+				return make_pair("seksen", false);
+			case 9:
+				return make_pair("doksan", false);
+			}
 		case 3:
-			return make_pair("otuz", false);
-		case 4:
-			return make_pair("kirk", false);
-		case 5:
-			return make_pair("elli", false);
-		case 6:
-			return make_pair("altmis", false);
-		case 7:
-			return make_pair("yetmis", false);
-		case 8:
-			return make_pair("seksen", false);
-		case 9:
-			return make_pair("doksan", false);
-		}
-	case 3:
-	{
-		pair<string, bool> returnVals;
-		string hundreds = "";
-		if (number != 0)
 		{
-			if (number != 1)
+			if (number != 0)
 			{
-				returnVals = convert_to_text(input, number, 1, false);
-				hundreds = returnVals.first;
+				if (number != 1)
+				{
+					returnVals = convert_to_text(input, number, 1, false);
+					output = returnVals.first;
+				}
+
+				output += "yuz";
 			}
-
-			hundreds += "yuz";
+			return make_pair(output, false);
 		}
-
-		return make_pair(hundreds, false);
-	}
-	case 4:
-	{
-		pair<string, bool> returnVals;
-		string thousands = "";
-		if (number != 0)
-		{
-			if (number != 1)
-			{
-				returnVals = convert_to_text(input, number, 1, false);
-				thousands = returnVals.first;
-			}
-
-			thousands += "bin";
 		}
-		else if (number == 0 && isUpperBasamak)
-		{
-			thousands += "bin";
-			isUpperBasamak = false;
-		}
-
-		return make_pair(thousands, false);
-	}
-	case 5:
-	{
-		pair<string, bool> returnVals;
-		string tenthousands = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 2, false);
-			tenthousands = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(tenthousands, isUpperBasamak);
-	}
-	case 6:
-	{
-		pair<string, bool> returnVals;
-		string hundredthousands = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 3, false);
-			hundredthousands = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(hundredthousands, isUpperBasamak);
-	}
-	case 7:
-	{
-		pair<string, bool> returnVals;
-		string millions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 1, false);
-			millions = returnVals.first;
-			millions += "milyon";
-		}
-		else if (number == 0 && isUpperBasamak)
-		{
-			millions += "milyon";
-			isUpperBasamak = false;
-		}
-
-		return make_pair(millions, false);
-	}
-	case 8:
-	{
-		pair<string, bool> returnVals;
-		string tenmillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 2, false);
-			tenmillions = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(tenmillions, isUpperBasamak);
-	}
-	case 9:
-	{
-		pair<string, bool> returnVals;
-		string hundredmillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 3, false);
-			hundredmillions = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(hundredmillions, isUpperBasamak);
-	}
-	case 10:
-	{
-		pair<string, bool> returnVals;
-		string billions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 1, false);
-			billions = returnVals.first;
-			billions += "milyar";
-		}
-		else if (number == 0 && isUpperBasamak)
-		{
-			billions += "milyar";
-			isUpperBasamak = false;
-		}
-
-		return make_pair(billions, false);
-	}
-	case 11:
-	{
-		pair<string, bool> returnVals;
-		string tenbillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 2, false);
-			tenbillions = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(tenbillions, isUpperBasamak);
-	}
-	case 12:
-	{
-		pair<string, bool> returnVals;
-		string hundredbillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 3, false);
-			hundredbillions = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(hundredbillions, isUpperBasamak);
-	}
-	case 13:
-	{
-		pair<string, bool> returnVals;
-		string trillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 1, false);
-			trillions = returnVals.first;
-			trillions += "trilyon";
-		}
-		else if (number == 0 && isUpperBasamak)
-		{
-			trillions += "trilyon";
-			isUpperBasamak = false;
-		}
-
-		return make_pair(trillions, false);
-	}
-	case 14:
-	{
-		pair<string, bool> returnVals;
-		string tentrillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 2, false);
-			tentrillions = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(tentrillions, isUpperBasamak);
-	}
-	case 15:
-	{
-		pair<string, bool> returnVals;
-		string hundredtrillions = "";
-		if (number != 0)
-		{
-			returnVals = convert_to_text(input, number, 3, false);
-			hundredtrillions = returnVals.first;
-			isUpperBasamak = true;
-		}
-
-		return make_pair(hundredtrillions, isUpperBasamak);
-	}
 	}
 	return make_pair("", false);
+}
+
+template <class T>
+pair<string, bool> onlar(T input ,int number, bool isUpperBasamak)
+{
+	pair<string, bool> returnVals;
+	string output = "";
+
+	if (number != 0)
+	{
+		returnVals = convert_to_text(input, number, 2, false);
+		output = returnVals.first;
+		isUpperBasamak = true;
+	}
+
+	return make_pair(output, isUpperBasamak);
+}
+
+template <class T>
+pair<string, bool> yuzler(T input, int number, bool isUpperBasamak)
+{
+	pair<string, bool> returnVals;
+	string output = "";
+	if (number != 0)
+	{
+		returnVals = convert_to_text(input, number, 3, false);
+		output = returnVals.first;
+		isUpperBasamak = true;
+	}
+
+	return make_pair(output, isUpperBasamak);
 }
 
 template <class T>
