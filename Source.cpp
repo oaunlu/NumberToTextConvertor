@@ -19,9 +19,7 @@ template <class T>
 pair<string, bool> convert_to_text(T, int, int, bool);
 
 template <class T>
-pair<string, bool> onlar(T, int, bool);
-template <class T>
-pair<string, bool> yuzler(T, int, bool);
+pair<string, bool> basamaak(T, int, bool, int);
 
 int main()	// driver code
 {
@@ -112,7 +110,7 @@ pair<string, bool> convert_to_text(T input, int number, int basamaksayisi, bool 
 		{
 		case 0:
 		{
-			returnVals = yuzler(input, number, isUpperBasamak);
+			returnVals = basamaak(input, number, isUpperBasamak, 3);
 			return returnVals;
 		}
 		case 1:
@@ -178,7 +176,7 @@ pair<string, bool> convert_to_text(T input, int number, int basamaksayisi, bool 
 		}
 		case 2:
 		{
-			returnVals = onlar(input, number, isUpperBasamak);
+			returnVals = basamaak(input, number, isUpperBasamak, 2);
 			return returnVals;
 		}
 		}
@@ -255,29 +253,14 @@ pair<string, bool> convert_to_text(T input, int number, int basamaksayisi, bool 
 }
 
 template <class T>
-pair<string, bool> onlar(T input ,int number, bool isUpperBasamak)
+pair<string, bool> basamaak(T input ,int number, bool isUpperBasamak, int i)
 {
 	pair<string, bool> returnVals;
 	string output = "";
 
 	if (number != 0)
 	{
-		returnVals = convert_to_text(input, number, 2, false);
-		output = returnVals.first;
-		isUpperBasamak = true;
-	}
-
-	return make_pair(output, isUpperBasamak);
-}
-
-template <class T>
-pair<string, bool> yuzler(T input, int number, bool isUpperBasamak)
-{
-	pair<string, bool> returnVals;
-	string output = "";
-	if (number != 0)
-	{
-		returnVals = convert_to_text(input, number, 3, false);
+		returnVals = convert_to_text(input, number, i, false);
 		output = returnVals.first;
 		isUpperBasamak = true;
 	}
