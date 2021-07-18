@@ -1,0 +1,260 @@
+#include "convertor.h"
+
+convertor::convertor(long double input) 
+{
+	stringstream ss;
+	ss << fixed << setprecision(/*numeric_limits<float>::max()*/2) << input; // string conversion with stringsream
+	string strinpt = ss.str();
+
+	//string strinpt = to_string(input); // string conversion with std::to_string() function
+
+	//string strinpt(STRING(input));	// string conversion with macro expression
+
+	string str1 = strinpt.substr(0, strinpt.find("."));
+	string str2 = strinpt.substr(strinpt.find(".") + 1);
+
+	//cout << str1 << endl << str2 << endl;
+
+	long long input1 = stoll(str1);
+	long input2 = stol(str2);
+
+	string output = "";
+
+	vector <int> intArr1 = integerToArray<long long>(input1);
+	vector <int> intArr2 = integerToArray<long>(input2);
+
+	long n1 = intArr1.size();
+	bool isUpperBasamak = false;
+	for (unsigned i = 0; i < intArr1.size(); i++)
+	{
+		pair<string, bool> returnVals = convert_to_text<long long>(input1, intArr1[i], n1, isUpperBasamak);
+		output += returnVals.first;
+		isUpperBasamak = returnVals.second;
+		n1--;
+	}
+
+	if (input2 != 0)
+	{
+		output += "nokta";
+
+		long n2 = intArr2.size();
+		bool isUpperBasamak = false;
+		for (unsigned i = 0; i < intArr2.size(); i++)
+		{
+			pair<string, bool> returnVals = convert_to_text<long>(input2, intArr2[i], n2, isUpperBasamak);
+			output += returnVals.first;
+			isUpperBasamak = returnVals.second;
+			n2--;
+		}
+	}
+	cout << output << endl;
+}
+
+convertor::~convertor()
+{
+	cout << "Devam etmek istiyor musunuz?\n evet/hayir\n";
+}
+
+template <class T>	//template function for text conversion
+pair<string, bool> convertor::convert_to_text(T input, int number, int basamaksayisi, bool isUpperBasamak) {
+	pair<string, bool> returnVals;
+	string output = "";
+	int basamak = basamaksayisi % 3;
+
+	if (basamaksayisi > 3)
+	{
+		switch (basamak)
+		{
+		case 0:
+		{
+			returnVals = basamaak(input, number, isUpperBasamak, 3);
+			return returnVals;
+		}
+		case 1:
+		{
+			if (basamaksayisi != 4)
+			{
+				if (number != 0)
+				{
+					returnVals = convert_to_text(input, number, 1, false);
+					output = returnVals.first;
+					switch (basamaksayisi)
+					{
+					case 7:
+						output += "milyon";
+						break;
+					case 10:
+						output += "milyar";
+						break;
+					case 13:
+						output += "trilyon";
+						break;
+					}
+				}
+				else if (number == 0 && isUpperBasamak)
+				{
+					switch (basamaksayisi)
+					{
+					case 7:
+						output += "milyon";
+						break;
+					case 10:
+						output += "milyar";
+						break;
+					case 13:
+						output += "trilyon";
+						break;
+					}
+					isUpperBasamak = false;
+				}
+
+				return make_pair(output, false);
+			}
+			else
+			{
+				if (number != 0)
+				{
+					if (number != 1)
+					{
+						returnVals = convert_to_text(input, number, 1, false);
+						output = returnVals.first;
+					}
+
+					output += "bin";
+				}
+				else if (number == 0 && isUpperBasamak)
+				{
+					output += "bin";
+					isUpperBasamak = false;
+				}
+
+				return make_pair(output, false);
+			}
+		}
+		case 2:
+		{
+			returnVals = basamaak(input, number, isUpperBasamak, 2);
+			return returnVals;
+		}
+		}
+	}
+	else
+	{
+		switch (basamaksayisi)
+		{
+		case 1:
+			switch (number)
+			{
+			case 0:
+				return make_pair("", false);
+			case 1:
+				return make_pair("bir", false);
+			case 2:
+				return make_pair("iki", false);
+			case 3:
+				return make_pair("uc", false);
+			case 4:
+				return make_pair("dort", false);
+			case 5:
+				return make_pair("bes", false);
+			case 6:
+				return make_pair("alti", false);
+			case 7:
+				return make_pair("yedi", false);
+			case 8:
+				return make_pair("sekiz", false);
+			case 9:
+				return make_pair("dokuz", false);
+			}
+		case 2:
+			switch (number)
+			{
+			case 0:
+				return make_pair("", false);
+			case 1:
+				return make_pair("on", false);
+			case 2:
+				return make_pair("yirmi", false);
+			case 3:
+				return make_pair("otuz", false);
+			case 4:
+				return make_pair("kirk", false);
+			case 5:
+				return make_pair("elli", false);
+			case 6:
+				return make_pair("altmis", false);
+			case 7:
+				return make_pair("yetmis", false);
+			case 8:
+				return make_pair("seksen", false);
+			case 9:
+				return make_pair("doksan", false);
+			}
+		case 3:
+		{
+			if (number != 0)
+			{
+				if (number != 1)
+				{
+					returnVals = convert_to_text(input, number, 1, false);
+					output = returnVals.first;
+				}
+
+				output += "yuz";
+			}
+			return make_pair(output, false);
+		}
+		}
+	}
+	return make_pair("", false);
+}
+
+template <class T>
+pair<string, bool> convertor::basamaak(T input, int number, bool isUpperBasamak, int i)
+{
+	pair<string, bool> returnVals;
+	string output = "";
+
+	if (number != 0)
+	{
+		returnVals = convert_to_text(input, number, i, false);
+		output = returnVals.first;
+		isUpperBasamak = true;
+	}
+
+	return make_pair(output, isUpperBasamak);
+}
+
+template <class T>
+vector <int> convertor::integerToArray(T x)
+{
+	vector <int> resultArray;
+	while (true)
+	{
+		resultArray.insert(resultArray.begin(), x % 10);
+		x /= 10;
+		if (x == 0)
+			return resultArray;
+	}
+}
+
+int convertor::count_digit(int number) {
+	int count = 0;
+
+	while (number != 0) {
+		number = number / 10;
+		count++;
+	}
+
+	return count;
+}
+
+int convertor::quick_pow10(int n)
+{
+	static int pow10[10] = {
+		1, 10, 100, 1000, 10000,
+		100000, 1000000, 10000000, 100000000, 1000000000
+	};
+
+	return pow10[n];
+}
